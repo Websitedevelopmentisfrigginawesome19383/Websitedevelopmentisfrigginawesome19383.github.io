@@ -14,8 +14,8 @@
     angular.module('authApp', [])
       .controller('AuthController', ['$window', function($window) {
         var auth0 = new auth0.WebAuth({
-          domain: 'YOUR_AUTH0_DOMAIN',
-          clientID: 'YOUR_AUTH0_CLIENT_ID'
+          domain: 'dev-g5aj7n6hle8fr6en.us.auth0.com',
+          clientID: 'sz5iw3ztPtQIlEsHKEuoxvLHNNH86hD4'
         });
 
         this.login = function() {

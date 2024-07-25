@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auth Button Component</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://cdn.auth0.com/js/auth0/9.17/auth0.min.js"></script>
+</head>
+<body ng-app="authApp" ng-controller="AuthController as authCtrl">
 
+  <button ng-click="authCtrl.login()">Log in</button>
+
+  <script>
+    angular.module('authApp', [])
+      .controller('AuthController', ['$window', function($window) {
+        var auth0 = new auth0.WebAuth({
+          domain: 'YOUR_AUTH0_DOMAIN',
+          clientID: 'YOUR_AUTH0_CLIENT_ID'
+        });
+
+        this.login = function() {
+          auth0.authorize({
+            redirectUri: $window.location.href,
+            responseType: 'token id_token',
+            scope: 'openid profile email'
+          });
+        };
+      }]);
+  </script>
+
+</body>
+</html>

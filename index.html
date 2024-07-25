@@ -2,30 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Auth Button Component</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="https://cdn.auth0.com/js/auth0/9.17/auth0.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth0 Angular Example</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zone.js/0.11.4/zone.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@angular/core@15.2.0/bundles/core.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@15.2.0/bundles/platform-browser-dynamic.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@angular/common@15.2.0/bundles/common.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@angular/compiler@15.2.0/bundles/compiler.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@angular/platform-browser@15.2.0/bundles/platform-browser.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@angular/router@15.2.0/bundles/router.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@auth0/auth0-angular@1.10.0/bundles/auth0-angular.umd.min.js"></script>
 </head>
-<body ng-app="authApp" ng-controller="AuthController as authCtrl">
+<body>
+  <app-root></app-root>
 
-  <button ng-click="authCtrl.login()">Log in</button>
+  <script type="application/javascript">
+    (function () {
+      const { Component, NgModule, enableProdMode, Injectable, inject } = ng.core;
+      const { BrowserModule } = ng.platformBrowser;
+      const { platformBrowserDynamic } = ng.platformBrowserDynamic;
+      const { RouterModule } = ng.router;
+      const { AuthModule, AuthService } = auth0.auth0Angular;
 
-  <script>
-    angular.module('authApp', [])
-      .controller('AuthController', ['$window', function($window) {
-        var auth0 = new auth0.WebAuth({
-          domain: 'dev-g5aj7n6hle8fr6en.us.auth0.com',
-          clientID: 'sz5iw3ztPtQIlEsHKEuoxvLHNNH86hD4',
-          redirectUri: $window.location.href,
-          responseType: 'token id_token',
-          scope: 'openid profile email'
-        });
+      @Injectable({ providedIn: 'root' })
+      class AuthServiceWrapper {
+        constructor(authService) {
+          this.authService = authService;
+        }
+        loginWithRedirect() {
+          this.authService.loginWithRedirect();
+        }
+      }
+      AuthServiceWrapper.parameters = [AuthService];
 
-        this.login = function() {
-          auth0.authorize();
-        };
-      }]);
+      @Component({
+        selector: 'app-auth-button',
+        template: '<button (click)="auth.loginWithRedirect()">Log in</button>'
+      })
+      class AuthButtonComponent {
+        constructor(auth) {
+          this.auth = auth;
+        }
+      }
+      AuthButtonComponent.parameters = [AuthServiceWrapper];
+
+      @Component({
+        selector: 'app-root',
+        template: '<app-auth-button></app-auth-button>'
+      })
+      class AppComponent {}
+
+      @NgModule({
+        declarations: [AppComponent, AuthButtonComponent],
+        imports: [
+          BrowserModule,
+          RouterModule.forRoot([]),
+          AuthModule.forRoot({
+            domain: 'dev-g5aj7n6hle8fr6en.us.auth0.com',
+            clientId: 'sz5iw3ztPtQIlEsHKEuoxvLHNNH86hD4'
+          })
+        ],
+        providers: [AuthServiceWrapper],
+        bootstrap: [AppComponent]
+      })
+      class AppModule {}
+
+      enableProdMode();
+      platformBrowserDynamic().bootstrapModule(AppModule)
+        .catch(err => console.error(err));
+    })();
   </script>
-
 </body>
 </html>

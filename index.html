@@ -15,15 +15,14 @@
       .controller('AuthController', ['$window', function($window) {
         var auth0 = new auth0.WebAuth({
           domain: 'dev-g5aj7n6hle8fr6en.us.auth0.com',
-          clientID: 'sz5iw3ztPtQIlEsHKEuoxvLHNNH86hD4'
+          clientID: 'sz5iw3ztPtQIlEsHKEuoxvLHNNH86hD4',
+          redirectUri: $window.location.href,
+          responseType: 'token id_token',
+          scope: 'openid profile email'
         });
 
         this.login = function() {
-          auth0.authorize({
-            redirectUri: $window.location.href,
-            responseType: 'token id_token',
-            scope: 'openid profile email'
-          });
+          auth0.authorize();
         };
       }]);
   </script>
